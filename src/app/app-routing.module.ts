@@ -3,7 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
   // { path: '', loadChildren: './tabs/tabs.module#TabsPageModule' },
-  { path: '', loadChildren: './setup/setup.module#SetupPageModule' }
+  { path: '', loadChildren: './setup/setup.module#SetupPageModule' },
+  { path: 'setup-timer', loadChildren: './setup-timer/setup-timer.module#SetupTimerPageModule' }
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

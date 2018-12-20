@@ -12,4 +12,7 @@ export class SetupPage implements OnInit {
   ngOnInit() {
   }
 
+  startServer() {
+    console.log('starting server');
+  }
 }
