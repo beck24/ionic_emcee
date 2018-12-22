@@ -5,6 +5,18 @@
 </ion-header>
 
 <ion-content padding>
+  <div *ngIf="stateLoaded">
+    <div *ngIf="errors.length">
+      <ul>
+        <li *ngFor="let error of errors">{{ error }}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="qrcode">
+      <img [src]="qrcode" />
+    </div>
+
     <ion-button *ngIf="!serverStarted" expand="block" shape="round" color="primary" fill="outline" (click)="startServer()">Start Server</ion-button>
     <ion-button *ngIf="serverStarted" expand="block" shape="round" color="primary" fill="outline" (click)="stopServer()">Stop Server</ion-button>
+  </div>
 </ion-content>
