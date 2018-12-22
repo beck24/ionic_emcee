@@ -1,22 +1,35 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>setup-timer</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content padding>
   <div *ngIf="stateLoaded">
-    <div *ngIf="errors.length">
+    <div class="error" *ngIf="errors.length">
       <ul>
         <li *ngFor="let error of errors">{{ error }}</li>
       </ul>
     </div>
 
-    <div *ngIf="qrcode">
+    <div *ngIf="qrcode" text-center>
       <img [src]="qrcode" />
+
+      Scan the image above with the controller device to begin
     </div>
 
-    <ion-button *ngIf="!serverStarted" expand="block" shape="round" color="primary" fill="outline" (click)="startServer()">Start Server</ion-button>
-    <ion-button *ngIf="serverStarted" expand="block" shape="round" color="primary" fill="outline" (click)="stopServer()">Stop Server</ion-button>
+    <div *ngIf="!qrcode">
+      <p>
+        To set this device up as the display ensure that it is connected to the same WIFI network as the controller device.
+      </p>
+
+      <p>
+        Note that the WIFI network does not need to be connected to the public internet. This can be a standard router, or
+        even setting one of the devices to act as a mobile hotspot.
+      </p>
+
+      <p>
+        Once the device is connected to the WIFI tap the button below to begin the connection.
+      </p>
+    </div>
+
+    <ion-button *ngIf="!serverStarted" expand="block" color="primary" (click)="startServer()">Connect</ion-button>
+    <ion-button *ngIf="!serverStarted" expand="block" color="danger" routerLink="/">Cancel</ion-button>
+
+    <ion-button *ngIf="serverStarted" expand="block" color="danger" (click)="stopServer()">Disconnect</ion-button>
   </div>
 </ion-content>

@@ -21,7 +21,6 @@ export class SetupTimerPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log('oninit called');
     this.startServer();
   }
 
@@ -34,6 +33,7 @@ export class SetupTimerPage implements OnInit {
 
     if (!webserver || !networkInterface) {
       console.log('webserver unavailable');
+      this.errors.push('Webserver Unavailable');
       this.stateLoaded = true;
       return;
     }
@@ -89,7 +89,7 @@ export class SetupTimerPage implements OnInit {
 
     const networkError = async (error) => {
       console.error(`Unable to get IP: ${error}`);
-      this.errors.push('Unable to get IP: ${error}');
+      this.errors.push(`Unable to get IP: ${error}`);
       this.errors.push('Cannot detect WIFI connection');
       this.stateLoaded = true;
       await this.hideLoading();
