@@ -10,6 +10,10 @@
       <img [src]="deviceConnectionService.qrcode" />
 
       <p>Scan the image above with the controller device to begin</p>
+
+      <p>
+        IP: {{ deviceConnectionService.ipaddress }}<br>
+      </p>
     </div>
 
     <div *ngIf="!deviceConnectionService.qrcode">

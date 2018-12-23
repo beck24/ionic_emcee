@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import uuidv4 from 'uuid/v4';
 import QRCode from 'qrcode';
+import queryString from 'query-string';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,8 @@ export class DeviceConnectionService {
   serverStarted: boolean = false;
   remoteConnected: boolean = false;
   qrcode = '';
+  listeners = {};
+  debug = false;
 
   constructor() {
     this.token = uuidv4();
@@ -37,15 +40,41 @@ export class DeviceConnectionService {
         this.ipaddress = address.ip;
 
         webserver.onRequest(
-          (request) => {
+          async (request) => {
+            let status: number = 200;
+            let body = {};
+            let requestToken = '';
+            if (request.hasOwnProperty('query')) {
+              const query = queryString.parse(request.query);
+              requestToken = query.token ? query.token : '';
+            }
+
+            if (requestToken !== this.token && !this.debug) {
+              status = 403;
+              body = { message: 'Unauthorized' };
+            } else if (!this.listeners.hasOwnProperty(request.path)) {
+              status = 404;
+              body = { message: 'Not Found' };
+            } else {
+              try {
+                const result = await this.listeners[request.path](request);
+
+                status = result.status;
+                body = result.body;
+              } catch (e) {
+                status = 500;
+                body = { error: e.message };
+              }
+            }
+
             webserver.sendResponse(
               request.requestId,
               {
-                status: 200,
-                body: {'test': 'result'}, // '<html>Hello World new!</html>',
+                status,
+                body,
                 headers: {
-                  'Content-Type': 'application/json', // 'Content-Type': 'text/html'
-                }
+                  'Content-Type': 'application/json',
+                },
               }
             );
           }
@@ -108,5 +137,25 @@ export class DeviceConnectionService {
 
       webserver.stop(success, error);
     });
+  }
+
+  /**
+   * Register a listener function
+   * 
+   * @param path String - the path to listen to
+   * @param callback - a function that returns a promise, resolves a state
+   */
+  registerListener(path, callback) {
+    this.listeners[path] = callback;
+  }
+
+  /**
+   * 
+   * @param path - String - the path to unregister
+   */
+  unregisterListener(path) {
+    if (this.listeners.hasOwnProperty(path)) {
+      delete this.listeners[path];
+    }
   }
 }
