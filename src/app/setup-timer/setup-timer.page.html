@@ -6,13 +6,13 @@
       </ul>
     </div>
 
-    <div *ngIf="qrcode" text-center>
-      <img [src]="qrcode" />
+    <div *ngIf="deviceConnectionService.qrcode" text-center>
+      <img [src]="deviceConnectionService.qrcode" />
 
-      Scan the image above with the controller device to begin
+      <p>Scan the image above with the controller device to begin</p>
     </div>
 
-    <div *ngIf="!qrcode">
+    <div *ngIf="!deviceConnectionService.qrcode">
       <p>
         To set this device up as the display ensure that it is connected to the same WIFI network as the controller device.
       </p>
@@ -27,9 +27,9 @@
       </p>
     </div>
 
-    <ion-button *ngIf="!serverStarted" expand="block" color="primary" (click)="startServer()">Connect</ion-button>
-    <ion-button *ngIf="!serverStarted" expand="block" color="danger" routerLink="/">Cancel</ion-button>
+    <ion-button *ngIf="!deviceConnectionService.serverStarted" expand="block" color="primary" (click)="startServer()">Connect</ion-button>
+    <ion-button *ngIf="!deviceConnectionService.serverStarted" expand="block" color="danger" routerLink="/">Cancel</ion-button>
 
-    <ion-button *ngIf="serverStarted" expand="block" color="danger" (click)="stopServer()">Disconnect</ion-button>
+    <ion-button *ngIf="deviceConnectionService.serverStarted" expand="block" color="danger" (click)="stopServer()">Disconnect</ion-button>
   </div>
 </ion-content>

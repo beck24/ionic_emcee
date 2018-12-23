@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
+import { DeviceConnectionService } from '../device-connection.service';
 import QRCode from 'qrcode';
 
 @Component({
@@ -9,124 +10,45 @@ import QRCode from 'qrcode';
 })
 export class SetupTimerPage implements OnInit {
   serverStarted: boolean = false;
-  stateLoaded: boolean = false;
+  stateLoaded: boolean = true;
   errors: Array<string> = [];
   loading = null;
-  ipaddress = '';
-  port = 8333;
-  qrcode = '';
 
   constructor(
     public loadingController: LoadingController,
+    public deviceConnectionService: DeviceConnectionService,
   ) { }
 
-  ngOnInit() {
-    this.startServer();
-  }
+  ngOnInit() {}
 
   async startServer() {
+    await this.showLoading();
     this.stateLoaded = false;
     this.errors = [];
 
-    const webserver = window['webserver'];
-    const networkInterface = window['networkinterface'];
-
-    if (!webserver || !networkInterface) {
-      console.log('webserver unavailable');
-      this.errors.push('Webserver Unavailable');
-      this.stateLoaded = true;
-      return;
-    }
-
-    await this.showLoading();
-
-    const networkSuccess = (address) => {
-      console.log(address);
-      console.info(`IP: ${address.ip}, Subnet: ${address.subnet}`);
-      this.ipaddress = address.ip;
-
-      webserver.onRequest(
-        (request) => {
-          webserver.sendResponse(
-            request.requestId,
-            {
-              status: 200,
-              body: '<html>Hello World</html>',
-              headers: {
-                'Content-Type': 'text/html'
-              }
-            }
-          );
-        }
-      );
-  
-      const s = async () => {
-        console.log('started');
-        console.log('generate qr code');
-
-        const payload = {
-          address: this.ipaddress,
-          port: this.port,
-        };
-
-        this.qrcode = await QRCode.toDataURL(JSON.stringify(payload))
-        this.serverStarted = true;
+    this.deviceConnectionService.startServer()
+      .catch((error) => {
+        this.errors.push(error);
+      })
+      .finally(() => {
         this.stateLoaded = true;
-        await this.hideLoading();
-      };
-  
-      const e = async (er) => {
-        console.log('errored');
-        console.log(er);
-        this.errors.push('Cannot start server');
-        this.errors.push(JSON.stringify(er));
-        this.stateLoaded = true;
-        await this.hideLoading();
-      };
-      
-      webserver.start(s, e, this.port);
-    };
-
-    const networkError = async (error) => {
-      console.error(`Unable to get IP: ${error}`);
-      this.errors.push(`Unable to get IP: ${error}`);
-      this.errors.push('Cannot detect WIFI connection');
-      this.stateLoaded = true;
-      await this.hideLoading();
-    };
-
-    networkInterface.getWiFiIPAddress(networkSuccess, networkError);
+        this.hideLoading();
+      });
   }
 
   async stopServer() {
-    this.stateLoaded = false;
-
-    const webserver = window['webserver'];
-
-    if (!webserver) {
-      console.log('webserver unavailable');
-      return;
-    }
-
     await this.showLoading();
+    this.stateLoaded = false;
+    this.errors = [];
 
-    const success = async () => {
-      console.log('stopped!');
-      this.qrcode = '';
-      this.ipaddress = '';
-      this.serverStarted = false;
-      this.stateLoaded = true;
-      await this.hideLoading();
-    }
-
-    const error = async (err) => {
-      console.log('failed to stop server');
-      console.log(err);
-      this.stateLoaded = true;
-      await this.hideLoading();
-    }
-
-    webserver.stop(success, error);
+    this.deviceConnectionService.stopServer()
+      .catch((error) => {
+        this.errors.push(error);
+      })
+      .finally(() => {
+        this.stateLoaded = true;
+        this.hideLoading();
+      });
   }
 
   async showLoading() {
@@ -155,6 +77,8 @@ export class SetupTimerPage implements OnInit {
   
       await this.loading.dismiss();
       this.loading = null;
+
+      resolve();
     });
   }
 }
