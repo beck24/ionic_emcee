@@ -9,7 +9,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { DeviceConnectionService } from './device-connection.service';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { DeviceConnectionService } from './services/device-connection/device-connection.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,6 +20,7 @@ import { DeviceConnectionService } from './device-connection.service';
     StatusBar,
     SplashScreen,
     DeviceConnectionService,
+    BarcodeScanner,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

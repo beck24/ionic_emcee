@@ -1,3 +1,6 @@
+Build IOS: ionic cordova build ios -- --buildFlag="-UserModernBuildSystem=0
+Note: iphone must not be plugged in during build
+
 Ionic:
 
    ionic (Ionic CLI)             : 4.6.0 (/Users/mbeckett/.nvm/versions/node/v10.4.0/lib/node_modules/ionic)

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-import { DeviceConnectionService } from '../device-connection.service';
+import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
 import QRCode from 'qrcode';
 
 @Component({

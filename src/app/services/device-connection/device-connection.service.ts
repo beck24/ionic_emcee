@@ -2,25 +2,35 @@ import { Injectable } from '@angular/core';
 import uuidv4 from 'uuid/v4';
 import QRCode from 'qrcode';
 import queryString from 'query-string';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceConnectionService {
-  ipaddress = '';
-  remoteaddress = '';
-  port = 8333;
-  remoteport = null;
-  token = '';
-  remotetoken = '';
   serverStarted: boolean = false;
   remoteConnected: boolean = false;
-  qrcode = '';
   listeners = {};
-  debug = false;
+  qrcode = '';
 
-  constructor() {
-    this.token = uuidv4();
+  thisDevice = {
+    ipaddress: '',
+    port: 8333,
+    token: '',
+  };
+
+  otherDevice = {
+    ipaddress: '',
+    port: 8333,
+    token: '',
+  };
+
+  debug = true;
+
+  constructor(
+    private barcodeScanner: BarcodeScanner
+  ) {
+    this.thisDevice.token = uuidv4();
   }
 
   /**
@@ -37,7 +47,7 @@ export class DeviceConnectionService {
       }
 
       const networkSuccess = (address) => {
-        this.ipaddress = address.ip;
+        this.thisDevice.ipaddress = address.ip;
 
         webserver.onRequest(
           async (request) => {
@@ -49,7 +59,7 @@ export class DeviceConnectionService {
               requestToken = query.token ? query.token : '';
             }
 
-            if (requestToken !== this.token && !this.debug) {
+            if (requestToken !== this.thisDevice.token && !this.debug) {
               status = 403;
               body = { message: 'Unauthorized' };
             } else if (!this.listeners.hasOwnProperty(request.path)) {
@@ -82,18 +92,13 @@ export class DeviceConnectionService {
     
         const s = async () => {
           const payload = {
-            address: this.ipaddress,
-            port: this.port,
-            token: this.token,
+            ...this.thisDevice,
           };
 
           this.qrcode = await QRCode.toDataURL(JSON.stringify(payload));
           this.serverStarted = true;
 
-          resolve({
-            ...payload,
-            qrcode: this.qrcode,
-          });
+          resolve(payload);
         };
     
         const e = async (er) => {
@@ -101,7 +106,7 @@ export class DeviceConnectionService {
           reject('Cannot start server');
         };
         
-        webserver.start(s, e, this.port);
+        webserver.start(s, e, this.thisDevice.port);
       };
 
       const networkError = async (error) => {
@@ -124,7 +129,7 @@ export class DeviceConnectionService {
 
       const success = async () => {
         this.qrcode = '';
-        this.ipaddress = '';
+        this.thisDevice.ipaddress = '';
         this.serverStarted = false;
 
         resolve();
@@ -157,5 +162,17 @@ export class DeviceConnectionService {
     if (this.listeners.hasOwnProperty(path)) {
       delete this.listeners[path];
     }
+  }
+
+  scanSetup() {
+    this.barcodeScanner.scan({ formats: "QR_CODE" }).then((data) => {
+      console.log('QR data', data);
+
+      // set up other device info
+
+      // call handshake API
+     }).catch(err => {
+         console.log('Error', err);
+     });
   }
 }
