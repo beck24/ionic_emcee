@@ -3,6 +3,7 @@ import uuidv4 from 'uuid/v4';
 import QRCode from 'qrcode';
 import queryString from 'query-string';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 export class DeviceConnectionService {
   serverStarted: boolean = false;
   remoteConnected: boolean = false;
+  corsHeaders = 'Content-Type, X-Requested-With, Accept-Encoding, Accept-Language, Access-Control-Request-Headers, Access-Control-Request-Method, Cache-Control, Connection, Host, Origin, Pragma, Referer, User-Agent, X-DevTools-Emulate-Network-Conditions-Client-Id';
   listeners = {};
   qrcode = '';
 
@@ -28,9 +30,22 @@ export class DeviceConnectionService {
   debug = true;
 
   constructor(
-    private barcodeScanner: BarcodeScanner
+    private barcodeScanner: BarcodeScanner,
+    private http: HttpClient,
   ) {
     this.thisDevice.token = uuidv4();
+
+    this.registerListener('/api/handshake', (request) => {
+      console.log('hand shaking received');
+      console.log(request);
+
+      return {
+        status: 200,
+        body: {
+          ...this.thisDevice,
+        }
+      };
+    });
   }
 
   /**
@@ -51,6 +66,28 @@ export class DeviceConnectionService {
 
         webserver.onRequest(
           async (request) => {
+            // Handle options request
+            if (request.method === 'OPTIONS') {
+              console.log('sending options');
+              webserver.sendResponse(
+                request.requestId,
+                {
+                  status: 200,
+                  body: '',
+                  headers: {
+                    'Access-Control-Allow-Headers': this.corsHeaders,
+                    'Access-Control-Allow-Origin': '*',
+                    'Allow': 'GET, POST, OPTIONS',
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+
+              resolve();
+              return;
+            }
+
+            // handle actual request
             let status: number = 200;
             let body = {};
             let requestToken = '';
@@ -83,6 +120,9 @@ export class DeviceConnectionService {
                 status,
                 body,
                 headers: {
+                  'Access-Control-Allow-Headers': '*',
+                  'Access-Control-Allow-Origin': '*',
+                  'Allow': 'GET, POST, OPTIONS',
                   'Content-Type': 'application/json',
                 },
               }
@@ -164,15 +204,61 @@ export class DeviceConnectionService {
     }
   }
 
+  handshake() {
+    console.log('handshaking');
+    return this.callApi('api/handshake', { ...this.thisDevice } );
+  }
+
   scanSetup() {
-    this.barcodeScanner.scan({ formats: "QR_CODE" }).then((data) => {
-      console.log('QR data', data);
+    return new Promise(async (resolve, reject) => {
+      let data, handshakeData;
 
-      // set up other device info
+      this.barcodeScanner.scan({ formats: "QR_CODE" })
+        .then((data) => {
+          const dataJSON = JSON.parse(data.text);
 
-      // call handshake API
-     }).catch(err => {
-         console.log('Error', err);
-     });
+          if (dataJSON.cancelled) {
+            reject("Scan was cancelled");
+            return;
+          }
+
+          if (!dataJSON.ipaddress || !dataJSON.port || !dataJSON.token) {
+            reject("Invalid QR Code was scanned");
+            return;
+          }
+
+          this.otherDevice.ipaddress = dataJSON.ipaddress;
+          this.otherDevice.token = dataJSON.token;
+          this.otherDevice.port = dataJSON.port;
+
+          this.handshake()
+            .then((handshakeData) => {
+              console.log('handshakeData', handshakeData);
+              resolve(handshakeData);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  callApi(path, data = {}) {
+    return new Promise((resolve, reject) => {
+      const url = `http://${this.otherDevice.ipaddress}:${this.otherDevice.port}${path}?token=${this.otherDevice.token}`;
+      
+      this.http.post(url, data)
+      .subscribe((res) => {
+        console.log(res);
+        resolve(res);
+      },
+      (err) => {
+        console.log('post error', err);
+        reject(err);
+      });
+    });
   }
 }

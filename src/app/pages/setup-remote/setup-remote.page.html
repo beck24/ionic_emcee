@@ -1,9 +1,31 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>setup-remote</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content padding>
-
-</ion-content>
+    <div *ngIf="stateLoaded">
+      <div class="error" *ngIf="errors.length">
+        <ul>
+          <li *ngFor="let error of errors">{{ error }}</li>
+        </ul>
+      </div>
+  
+      <div>
+        <p>
+          To set this device up as the display ensure that it is connected to the same WIFI network as the display device.
+        </p>
+  
+        <p>
+          Note that the WIFI network does not need to be connected to the public internet. This can be a standard router, or
+          even setting one of the devices to act as a mobile hotspot.
+        </p>
+  
+        <p>
+          Once the device is connected to the WIFI start the connection on the display device.  Once the QR Code is visible
+          tap the button below and scan the code to complete the connection.
+        </p>
+      </div>
+  
+      <ion-button *ngIf="!deviceConnectionService.serverStarted" expand="block" color="primary" (click)="deviceConnectionService.scanSetup()">Connect</ion-button>
+      <ion-button *ngIf="!deviceConnectionService.serverStarted" expand="block" color="danger" routerLink="/">Cancel</ion-button>
+  
+      <ion-button *ngIf="deviceConnectionService.serverStarted" expand="block" color="danger" (click)="stopServer()">Disconnect</ion-button>
+    </div>
+  </ion-content>
+  
