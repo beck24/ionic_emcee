@@ -12,6 +12,7 @@ import { DebuggerComponent } from './components/modals/debugger/debugger.compone
 })
 export class AppComponent {
   debugTapCount = 0;
+  debuggerActive: boolean = false;
 
   constructor(
     private platform: Platform,
@@ -48,12 +49,17 @@ export class AppComponent {
   }
 
   async launchDebugger() {
+    if (this.debuggerActive) {
+      return;
+    }
+
     const modal = await this.modalController.create({
       component: DebuggerComponent,
     });
 
     modal.onDidDismiss().then(() => {
       this.logger.log('Logger dismissed');
+      this.debuggerActive = false;
     });
 
     return await modal.present().then(() => {

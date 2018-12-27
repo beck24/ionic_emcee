@@ -9,6 +9,7 @@ import * as format from 'date-fns/format';
   styleUrls: ['./debugger.component.scss']
 })
 export class DebuggerComponent implements OnInit {
+  tab: string = 'log';
 
   constructor(
     private modalController: ModalController,
@@ -41,5 +42,9 @@ export class DebuggerComponent implements OnInit {
 
   clear() {
     this.logger.clear();
+  }
+
+  tabClicked(tab) {
+    this.tab = tab;
   }
 }

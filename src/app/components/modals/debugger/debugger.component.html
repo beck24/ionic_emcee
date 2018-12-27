@@ -7,10 +7,28 @@
     <ion-title>Debug Log</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content padding>
+<ion-content *ngIf="tab === 'log'" padding>
   <ion-button color="primary" (click)="clear()">Clear Log</ion-button>
   <div style="padding: 16px 0; border-top: 1px solid #cccccc" *ngFor="let log of logger.logs">
     <strong>{{ timeFormat(log.time) }}</strong>
     <textarea [rows]="rowsCount(dataFormat(log.data))" style="width: 100%">{{ dataFormat(log.data) }}</textarea>
   </div>
 </ion-content>
+
+<ion-content *ngIf="tab === 'api'" padding>
+  API
+</ion-content>
+
+<ion-footer>
+  <ion-tab-bar slot="bottom" [selectedTab]="tab">
+    <ion-tab-button tab="log" (click)="tabClicked('log')">
+      <ion-icon name="bug"></ion-icon>
+      <ion-label>Log</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="api" (click)="tabClicked('api')">
+      <ion-icon name="construct"></ion-icon>
+      <ion-label>API</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-footer>
