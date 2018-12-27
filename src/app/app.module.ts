@@ -15,6 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DeviceConnectionService } from './services/device-connection/device-connection.service';
 import { LoggerService } from './services/logger/logger.service';
 import { DebuggerComponent } from './components/modals/debugger/debugger.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent, DebuggerComponent],
@@ -24,6 +25,7 @@ import { DebuggerComponent } from './components/modals/debugger/debugger.compone
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
   ],
   providers: [
     StatusBar,

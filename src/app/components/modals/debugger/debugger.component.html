@@ -4,10 +4,11 @@
       <ion-back-button></ion-back-button>
       <ion-button color="primary" (click)="close()">Close</ion-button>
     </ion-buttons>
-    <ion-title>Debug Log</ion-title>
+    <ion-title>Developer Tools</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content *ngIf="tab === 'log'" padding>
+  <h4>Debug Log</h4>
   <ion-button color="primary" (click)="clear()">Clear Log</ion-button>
   <div style="padding: 16px 0; border-top: 1px solid #cccccc" *ngFor="let log of logger.logs">
     <strong>{{ timeFormat(log.time) }}</strong>
@@ -16,7 +17,19 @@
 </ion-content>
 
 <ion-content *ngIf="tab === 'api'" padding>
-  API
+  <form novalidate>
+    <ion-item>
+      <ion-label position="stacked">Path</ion-label>
+      <ion-input name="path" [(ngModel)]="apiPath" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">payload</ion-label>
+      <ion-textarea name="payload" [(ngModel)]="apiPayload" rows="10" required></ion-textarea>
+    </ion-item>
+
+    <ion-button type="submit" (click)="onAPISubmit()">Submit</ion-button>
+  </form>
 </ion-content>
 
 <ion-footer>

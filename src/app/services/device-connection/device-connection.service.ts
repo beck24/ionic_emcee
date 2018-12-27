@@ -37,19 +37,19 @@ export class DeviceConnectionService {
   ) {
     this.thisDevice.token = uuidv4();
 
-    this.registerListener('/api/handshake', (request) => {
+    this.registerListener('/api/handshake', (payload) => {
       return new Promise((resolve, reject) => {
         let result: any = { ...this.thisDevice };
         let status = 200;
-        const body = JSON.parse(request.body);
 
-        if (body.ipaddress && body.port && body.token) {
-          this.otherDevice.ipaddress = body.ipaddress;
-          this.otherDevice.port = body.port;
-          this.otherDevice.token = body.token;
+        if (payload.ipaddress && payload.port && payload.token) {
+          this.otherDevice.ipaddress = payload.ipaddress;
+          this.otherDevice.port = payload.port;
+          this.otherDevice.token = payload.token;
           this.remoteConnected = true;
 
           // navigate to waiting page
+          this.logger.log('navigate to waiting page');
         }
         else {
           status = 500;
@@ -82,9 +82,6 @@ export class DeviceConnectionService {
 
         webserver.onRequest(
           async (request) => {
-            this.logger.log('request heard');
-            this.logger.log(request);
-
             // Handle options request
             if (request.method === 'OPTIONS') {
               webserver.sendResponse(
@@ -125,7 +122,9 @@ export class DeviceConnectionService {
                 this.logger.log('routing request for path');
                 this.logger.log(request.path);
 
-                const result = await this.listeners[request.path](request);
+                const payload = JSON.parse(request.body);
+
+                const result = await this.listeners[request.path](payload);
 
                 status = result.status;
                 body = result.body;
