@@ -10,12 +10,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { DeviceConnectionService } from './services/device-connection/device-connection.service';
 import { HttpClientModule } from '@angular/common/http';
 
+import { DeviceConnectionService } from './services/device-connection/device-connection.service';
+import { LoggerService } from './services/logger/logger.service';
+import { DebuggerComponent } from './components/modals/debugger/debugger.component';
+
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, DebuggerComponent],
+  entryComponents: [DebuggerComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -27,6 +30,7 @@ import { HttpClientModule } from '@angular/common/http';
     SplashScreen,
     DeviceConnectionService,
     BarcodeScanner,
+    LoggerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

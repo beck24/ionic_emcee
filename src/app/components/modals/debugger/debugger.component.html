@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-back-button></ion-back-button>
+      <ion-button color="primary" (click)="close()">Close</ion-button>
+    </ion-buttons>
+    <ion-title>Debug Log</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <ion-button color="primary" (click)="clear()">Clear Log</ion-button>
+  <div style="padding: 16px 0; border-top: 1px solid #cccccc" *ngFor="let log of logger.logs">
+    <strong>{{ timeFormat(log.time) }}</strong>
+    <textarea [rows]="rowsCount(dataFormat(log.data))" style="width: 100%">{{ dataFormat(log.data) }}</textarea>
+  </div>
+</ion-content>

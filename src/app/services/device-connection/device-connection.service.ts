@@ -4,6 +4,7 @@ import QRCode from 'qrcode';
 import queryString from 'query-string';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { HttpClient } from '@angular/common/http';
+import { LoggerService } from '../../services/logger/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,19 +33,34 @@ export class DeviceConnectionService {
   constructor(
     private barcodeScanner: BarcodeScanner,
     private http: HttpClient,
+    private logger: LoggerService,
   ) {
     this.thisDevice.token = uuidv4();
 
     this.registerListener('/api/handshake', (request) => {
-      console.log('hand shaking received');
-      console.log(request);
+      return new Promise((resolve, reject) => {
+        let result: any = { ...this.thisDevice };
+        let status = 200;
+        const body = JSON.parse(request.body);
 
-      return {
-        status: 200,
-        body: {
-          ...this.thisDevice,
+        if (body.ipaddress && body.port && body.token) {
+          this.otherDevice.ipaddress = body.ipaddress;
+          this.otherDevice.port = body.port;
+          this.otherDevice.token = body.token;
+          this.remoteConnected = true;
+
+          // navigate to waiting page
         }
-      };
+        else {
+          status = 500;
+          result = { message: "Invalid parameters"};
+        }
+
+        resolve({
+          status,
+          body: result,
+        });
+      });
     });
   }
 
@@ -66,9 +82,11 @@ export class DeviceConnectionService {
 
         webserver.onRequest(
           async (request) => {
+            this.logger.log('request heard');
+            this.logger.log(request);
+
             // Handle options request
             if (request.method === 'OPTIONS') {
-              console.log('sending options');
               webserver.sendResponse(
                 request.requestId,
                 {
@@ -104,6 +122,9 @@ export class DeviceConnectionService {
               body = { message: 'Not Found' };
             } else {
               try {
+                this.logger.log('routing request for path');
+                this.logger.log(request.path);
+
                 const result = await this.listeners[request.path](request);
 
                 status = result.status;
@@ -142,7 +163,8 @@ export class DeviceConnectionService {
         };
     
         const e = async (er) => {
-          console.log(er);
+          this.logger.log("Cannot start server");
+          this.logger.log(er);
           reject('Cannot start server');
         };
         
@@ -150,7 +172,7 @@ export class DeviceConnectionService {
       };
 
       const networkError = async (error) => {
-        console.error(`Unable to get IP: ${error}`);
+        this.logger.log(`Unable to get IP: ${error}`);
         reject('Cannot detect WIFI IP address');
       };
 
@@ -176,7 +198,8 @@ export class DeviceConnectionService {
       }
 
       const error = async (err) => {
-        console.log(err);
+        this.logger.log("Failed to stop server");
+        this.logger.log(err);
         reject('Failed to stop server');
       }
 
@@ -205,14 +228,11 @@ export class DeviceConnectionService {
   }
 
   handshake() {
-    console.log('handshaking');
-    return this.callApi('api/handshake', { ...this.thisDevice } );
+    return this.callApi('/api/handshake', { ...this.thisDevice } );
   }
 
   scanSetup() {
     return new Promise(async (resolve, reject) => {
-      let data, handshakeData;
-
       this.barcodeScanner.scan({ formats: "QR_CODE" })
         .then((data) => {
           const dataJSON = JSON.parse(data.text);
@@ -233,8 +253,14 @@ export class DeviceConnectionService {
 
           this.handshake()
             .then((handshakeData) => {
-              console.log('handshakeData', handshakeData);
-              resolve(handshakeData);
+              if (handshakeData['ipaddress'] === this.otherDevice.ipaddress) {
+                this.remoteConnected = true;
+
+                resolve();
+                return;
+              }
+
+              reject('Invalid scan data');
             })
             .catch((err) => {
               reject(err);
@@ -252,11 +278,11 @@ export class DeviceConnectionService {
       
       this.http.post(url, data)
       .subscribe((res) => {
-        console.log(res);
         resolve(res);
       },
       (err) => {
-        console.log('post error', err);
+        this.logger.log('API Error');
+        this.logger.log(err);
         reject(err);
       });
     });
