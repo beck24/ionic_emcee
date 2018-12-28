@@ -10,9 +10,9 @@ import * as format from 'date-fns/format';
   styleUrls: ['./debugger.component.scss']
 })
 export class DebuggerComponent implements OnInit {
-  tab: string = 'log';
-  apiPath: string = '';
-  apiPayload: string = '';
+  tab: string = 'api';
+  apiPath: string = '/api/handshake';
+  apiPayload: string = '{\n  "ipaddress": "127.0.0.1",\n  "port": 8333,\n  "token": "abc123"\n}';
 
   constructor(
     private modalController: ModalController,

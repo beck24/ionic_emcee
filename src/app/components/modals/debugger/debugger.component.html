@@ -34,14 +34,13 @@
 
 <ion-footer>
   <ion-tab-bar slot="bottom" [selectedTab]="tab">
-    <ion-tab-button tab="log" (click)="tabClicked('log')">
-      <ion-icon name="bug"></ion-icon>
-      <ion-label>Log</ion-label>
-    </ion-tab-button>
-
     <ion-tab-button tab="api" (click)="tabClicked('api')">
       <ion-icon name="construct"></ion-icon>
       <ion-label>API</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="log" (click)="tabClicked('log')">
+      <ion-icon name="bug"></ion-icon>
+      <ion-label>Log</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-footer>

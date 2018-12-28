@@ -10,6 +10,10 @@ export class TimerPage implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log('on init');
   }
 
+  ngOnDestroy() {
+    console.log('on destroy');
+  }
 }
