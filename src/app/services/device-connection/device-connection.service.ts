@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { HttpClient } from '@angular/common/http';
 import { LoggerService } from '../../services/logger/logger.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,7 @@ export class DeviceConnectionService {
     private barcodeScanner: BarcodeScanner,
     private http: HttpClient,
     private logger: LoggerService,
+    private router: Router,
   ) {
     this.thisDevice.token = uuidv4();
 
@@ -50,6 +52,8 @@ export class DeviceConnectionService {
 
           // navigate to waiting page
           this.logger.log('navigate to waiting page');
+
+          this.router.navigate(['/timer']);
         }
         else {
           status = 500;
