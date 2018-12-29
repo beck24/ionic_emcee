@@ -33,11 +33,14 @@ export class AppComponent {
     });
   }
 
-  debugTap() {
+  debugDown() {
+    if (this.debuggerActive) {
+      return;
+    }
+
     this.debugTapCount++;
     
     if (this.debugTapCount === 5) {
-      console.log('debug enabled');
       this.debugTapCount = 0;
       this.launchDebugger();
     }
@@ -55,15 +58,15 @@ export class AppComponent {
 
     const modal = await this.modalController.create({
       component: DebuggerComponent,
+      backdropDismiss: false,
     });
 
     modal.onDidDismiss().then(() => {
-      this.logger.log('Logger dismissed');
       this.debuggerActive = false;
     });
 
     return await modal.present().then(() => {
-      this.logger.log('Logger opened');
+      this.debuggerActive = true;
     });
   }
 }

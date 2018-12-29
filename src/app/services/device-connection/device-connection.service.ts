@@ -234,6 +234,21 @@ export class DeviceConnectionService {
     return this.callApi('/api/handshake', { ...this.thisDevice } );
   }
 
+  async reset() {
+    this.stopServer()
+      .catch(() => {})
+      .finally(() => {
+        // forget other device settings
+        this.otherDevice = {
+          ipaddress: '',
+          port: 8333,
+          token: '',
+        };
+
+        this.router.navigate(['/']);
+      });
+  }
+
   scanSetup() {
     return new Promise(async (resolve, reject) => {
       this.barcodeScanner.scan({ formats: "QR_CODE" })

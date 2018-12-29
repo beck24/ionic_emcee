@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -17,6 +17,9 @@ import { LoggerService } from './services/logger/logger.service';
 import { DebuggerComponent } from './components/modals/debugger/debugger.component';
 import { FormsModule } from '@angular/forms';
 
+// https://medium.com/madewithply/ionic-4-long-press-gestures-96cf1e44098b
+import { IonicGestureConfig } from "./gestures/ionic-gesture-config";
+
 @NgModule({
   declarations: [AppComponent, DebuggerComponent],
   entryComponents: [DebuggerComponent],
@@ -33,7 +36,11 @@ import { FormsModule } from '@angular/forms';
     DeviceConnectionService,
     BarcodeScanner,
     LoggerService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: IonicGestureConfig
+    },
   ],
   bootstrap: [AppComponent]
 })

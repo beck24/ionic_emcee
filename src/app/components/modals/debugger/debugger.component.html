@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header *ngIf="tab !== 'reset'">
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-back-button></ion-back-button>
@@ -7,32 +7,48 @@
     <ion-title>Developer Tools</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content *ngIf="tab === 'log'" padding>
-  <h4>Debug Log</h4>
-  <ion-button color="primary" (click)="clear()">Clear Log</ion-button>
-  <div style="padding: 16px 0; border-top: 1px solid #cccccc" *ngFor="let log of logger.logs">
-    <strong>{{ timeFormat(log.time) }}</strong>
-    <textarea [rows]="rowsCount(dataFormat(log.data))" style="width: 100%">{{ dataFormat(log.data) }}</textarea>
-  </div>
+
+<ion-content padding tappable (press)="debugTap()">
+    <div *ngIf="tab === 'reset'">
+      <ion-button color="primary" (click)="resetDevice()">Reset Device</ion-button>
+      <ion-button color="danger" (click)="close()">Cancel</ion-button>
+    </div>
+
+    <div *ngIf="tab === 'log'">
+        <div style="height: 100%; overflow: auto">
+        <h4>Debug Log</h4>
+        <ion-button color="primary" (click)="clear()">Clear Log</ion-button>
+        <ion-list>
+          <ion-item *ngFor="let log of logger.logs" text-wrap>
+            <ion-label position="stacked">{{ timeFormat(log.time) }}</ion-label>
+            <ion-textarea [rows]="rowsCount(dataFormat(log.data))" style="width: 100%" [value]="dataFormat(log.data)" readonly></ion-textarea>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+
+    <div *ngIf="tab === 'api'">
+        <ion-button size="small" fill="outline" (click)="apiPopulate('handshake')">Handshake</ion-button>
+        <ion-button size="small" fill="outline" (click)="apiPopulate('timerStart')">TimerStart</ion-button>
+        <ion-button size="small" fill="outline" (click)="apiPopulate('timerStop')">TimerStop</ion-button>
+        <ion-button size="small" fill="outline" (click)="apiPopulate('timerReset')">TimerReset</ion-button>
+        <form novalidate>
+          <ion-item>
+            <ion-label position="stacked">Path</ion-label>
+            <ion-input name="path" [(ngModel)]="apiPath" required></ion-input>
+          </ion-item>
+      
+          <ion-item>
+            <ion-label position="stacked">payload</ion-label>
+            <ion-textarea name="payload" [(ngModel)]="apiPayload" rows="10" required></ion-textarea>
+          </ion-item>
+      
+          <ion-button type="submit" (click)="onAPISubmit()">Submit</ion-button>
+        </form>
+    </div>
 </ion-content>
 
-<ion-content *ngIf="tab === 'api'" padding>
-  <form novalidate>
-    <ion-item>
-      <ion-label position="stacked">Path</ion-label>
-      <ion-input name="path" [(ngModel)]="apiPath" required></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">payload</ion-label>
-      <ion-textarea name="payload" [(ngModel)]="apiPayload" rows="10" required></ion-textarea>
-    </ion-item>
-
-    <ion-button type="submit" (click)="onAPISubmit()">Submit</ion-button>
-  </form>
-</ion-content>
-
-<ion-footer>
+<ion-footer *ngIf="tab !== 'reset'">
   <ion-tab-bar slot="bottom" [selectedTab]="tab">
     <ion-tab-button tab="api" (click)="tabClicked('api')">
       <ion-icon name="construct"></ion-icon>
@@ -41,6 +57,10 @@
     <ion-tab-button tab="log" (click)="tabClicked('log')">
       <ion-icon name="bug"></ion-icon>
       <ion-label>Log</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="reset" (click)="tabClicked('reset')">
+      <ion-icon name="refresh"></ion-icon>
+      <ion-label>Reset</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-footer>

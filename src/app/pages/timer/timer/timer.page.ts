@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DeviceConnectionService } from '../../../services/device-connection/device-connection.service';
 
 @Component({
   selector: 'app-timer',
@@ -6,14 +7,47 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./timer.page.scss'],
 })
 export class TimerPage implements OnInit {
+  timerControl: String = 'reset';
+  time: any = '120000';
 
-  constructor() { }
+  constructor(
+    private deviceConnectionService: DeviceConnectionService
+  ) { }
 
   ngOnInit() {
-    console.log('on init');
+    this.registerAPIControls();
   }
 
   ngOnDestroy() {
-    console.log('on destroy');
+    this.unRegisterAPIControls();
+  }
+
+  cdResult($event) {
+    console.log('cdResult', $event);
+  }
+
+  registerAPIControls() {
+    this.deviceConnectionService.registerListener('/api/timer/control', (payload: any = {}) => {
+      return new Promise((resolve) => {
+        console.log(payload);
+
+        if (payload.hasOwnProperty('time')) {
+          this.time = payload.time;
+        }
+
+        if (payload.hasOwnProperty('control')) {
+          this.timerControl = payload.control;
+        }
+
+        resolve({
+          status: 200,
+          body: '',
+        });
+      });
+    });
+  }
+
+  unRegisterAPIControls() {
+    this.deviceConnectionService.unregisterListener('/api/timer/control');
   }
 }

@@ -10,9 +10,10 @@ import * as format from 'date-fns/format';
   styleUrls: ['./debugger.component.scss']
 })
 export class DebuggerComponent implements OnInit {
-  tab: string = 'api';
-  apiPath: string = '/api/handshake';
-  apiPayload: string = '{\n  "ipaddress": "127.0.0.1",\n  "port": 8333,\n  "token": "abc123"\n}';
+  tab: string = 'reset';
+  apiPath: string = '';
+  apiPayload: string = '';
+  debugTapCount: number = 0;
 
   constructor(
     private modalController: ModalController,
@@ -20,8 +21,17 @@ export class DebuggerComponent implements OnInit {
     private deviceConnectionService: DeviceConnectionService,
   ) { }
 
-  ngOnInit() {
-    console.log(this.logger.logs);
+  ngOnInit() {}
+
+  debugTap() {
+    this.tab = 'api';
+  }
+
+  resetDevice() {
+    this.close()
+      .then(() => {
+        this.deviceConnectionService.reset();
+      });
   }
 
   timeFormat(date) {
@@ -41,7 +51,7 @@ export class DebuggerComponent implements OnInit {
   }
 
   close() {
-    this.modalController.dismiss();
+    return this.modalController.dismiss();
   }
 
   clear() {
@@ -66,13 +76,34 @@ export class DebuggerComponent implements OnInit {
     
     this.modalController.dismiss()
       .then(async () => {
-        console.log('triggering after dismiss');
-        console.log(this.apiPath);
-        console.log(payload);
+        this.logger.log(`API PATH: ${this.apiPath}`);
+        this.logger.log(payload);
 
         const result = await this.deviceConnectionService.listeners[this.apiPath](payload);
 
-        console.log(result);
+        this.logger.log('API RESULT');
+        this.logger.log(result);
       });
+  }
+
+  apiPopulate(call) {
+    switch (call) {
+      case 'handshake':
+        this.apiPath = '/api/handshake';
+        this.apiPayload = '{\n  "ipaddress": "127.0.0.1",\n  "port": 8333,\n  "token": "abc123"\n}';
+      break;
+      case 'timerStart':
+        this.apiPath = '/api/timer/control';
+        this.apiPayload = '{\n  "time": "120000",\n  "control": "start"\n}';
+      break;
+      case 'timerStop':
+        this.apiPath = '/api/timer/control';
+        this.apiPayload = '{\n "control": "stop"\n}';
+      break;
+      case 'timerReset':
+        this.apiPath = '/api/timer/control';
+        this.apiPayload = '{\n"control": "reset"\n}';
+      break;
+    }
   }
 }
