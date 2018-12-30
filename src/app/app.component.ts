@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Platform, ModalController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { LoggerService } from './services/logger/logger.service';
 import { DebuggerComponent } from './components/modals/debugger/debugger.component';
 
@@ -18,6 +19,7 @@ export class AppComponent {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
+    private screenOrientation: ScreenOrientation,
     private logger: LoggerService,
     private modalController: ModalController,
   ) {
@@ -28,6 +30,10 @@ export class AppComponent {
     this.logger.enableLogging();
 
     this.platform.ready().then(() => {
+      if (this.platform.is('cordova')) {
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      }
+
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });

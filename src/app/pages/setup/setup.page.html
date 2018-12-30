@@ -1,11 +1,24 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>setup</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content padding>
-  <ion-button expand="block" shape="round" color="primary" fill="outline" routerLink="/setup-timer">Start as display</ion-button>
-
-  <ion-button expand="block" shape="round" color="primary" fill="outline" routerLink="/setup-remote">Start as controller</ion-button>
+    <div class="wrapper">
+      <div class="section" padding>
+        <div class="setup-button" text-center padding tappable routerLink="/setup-timer">
+          <div class="setup-icon">
+            <ion-icon name="tablet-landscape"></ion-icon>
+          </div>
+          <div class="button-text">
+            Start as display
+          </div>
+        </div>
+      </div>
+      <div class="section" padding>
+      <div class="setup-button" text-center padding tappable routerLink="/setup-remote">
+          <div class="setup-icon">
+            <ion-icon name="logo-game-controller-a"></ion-icon>
+          </div>
+          <div class="button-text">
+            Start as controller
+          </div>
+        </div>
+      </div>
+    </div>
 </ion-content>
