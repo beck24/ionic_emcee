@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import uuidv4 from 'uuid/v4';
 import QRCode from 'qrcode';
 import queryString from 'query-string';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { HttpClient } from '@angular/common/http';
 import { LoggerService } from '../../services/logger/logger.service';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -32,10 +32,10 @@ export class DeviceConnectionService {
   debug = true;
 
   constructor(
+    private navCtrl: NavController,
     private barcodeScanner: BarcodeScanner,
     private http: HttpClient,
     private logger: LoggerService,
-    private router: Router,
   ) {
     this.thisDevice.token = uuidv4();
 
@@ -53,7 +53,7 @@ export class DeviceConnectionService {
           // navigate to waiting page
           this.logger.log('navigate to waiting page');
 
-          this.router.navigate(['/timer']);
+          this.navCtrl.navigateForward('/timer');
         }
         else {
           status = 500;
@@ -245,7 +245,8 @@ export class DeviceConnectionService {
           token: '',
         };
 
-        this.router.navigate(['/']);
+        console.log('navigating back');
+        this.navCtrl.navigateBack('/');
       });
   }
 

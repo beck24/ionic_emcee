@@ -1,13 +1,12 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>timer</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content padding scrollX="true">
-  Timer Page
-  <br>
-  <a routerLink="/">Home</a>
-
-  <countdown [control]="timerControl" [time]="time" (result)="cdResult($event)"></countdown>
+<ion-content>
+  <div class="wrapper" padding>
+      <countdown
+        class="timer"
+        [control]="timerControl"
+        [time]="time"
+        [style.fontSize]="fontSize()"
+        (result)="cdResult($event)"
+      >
+      </countdown>
+  </div>
 </ion-content>

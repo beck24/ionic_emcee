@@ -96,14 +96,27 @@ export class CountdownComponent implements OnInit {
     const now = new Date();
     const then = addMilliseconds(now, milliseconds);
 
+    const thenOriginal = addMilliseconds(now, this.time);
+
+    const hOrig = differenceInHours(thenOriginal, now);
+    const mOrig = differenceInMinutes(thenOriginal, now);
+
     const h = differenceInHours(then, now);
     const m = differenceInMinutes(then, now) % 60;
     const s = differenceInSeconds(then, now) % 60;
 
-    let hourString = h < 10 ? `0${h}` : `${h}`;
-    let minuteString = m < 10 ? `0${m}` : `${m}`;
+    let hourString = h < 10 ? `0${h}:` : `${h}:`;
+    let minuteString = m < 10 ? `0${m}:` : `${m}:`;
     let secondString = s < 10 ? `0${s}` : `${s}`;
 
-    return `${hourString}:${minuteString}:${secondString}`;
+    if (!hOrig) {
+      hourString = '';
+
+      if (!mOrig) {
+        minuteString = '';
+      }
+    }
+
+    return `${hourString}${minuteString}${secondString}`;
   }
 }

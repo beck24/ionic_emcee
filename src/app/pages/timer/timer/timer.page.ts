@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import { DeviceConnectionService } from '../../../services/device-connection/device-connection.service';
 
 @Component({
@@ -9,9 +10,11 @@ import { DeviceConnectionService } from '../../../services/device-connection/dev
 export class TimerPage implements OnInit {
   timerControl: String = 'reset';
   time: any = '120000';
+  timerSize: any = 25;
 
   constructor(
-    private deviceConnectionService: DeviceConnectionService
+    private deviceConnectionService: DeviceConnectionService,
+    private toastCtrl: ToastController,
   ) { }
 
   ngOnInit() {
@@ -28,7 +31,7 @@ export class TimerPage implements OnInit {
 
   registerAPIControls() {
     this.deviceConnectionService.registerListener('/api/timer/control', (payload: any = {}) => {
-      return new Promise((resolve) => {
+      return new Promise(async (resolve) => {
         console.log(payload);
 
         if (payload.hasOwnProperty('time')) {
@@ -37,6 +40,20 @@ export class TimerPage implements OnInit {
 
         if (payload.hasOwnProperty('control')) {
           this.timerControl = payload.control;
+        }
+
+        if (payload.hasOwnProperty('timerSize')) {
+          this.timerSize = payload.timerSize;
+        }
+
+        if (payload.hasOwnProperty('message')) {
+          const toast = await this.toastCtrl.create({
+            message: payload.message,
+            duration: 5000,
+            position: 'top',
+            color: 'primary',
+          });
+          toast.present();
         }
 
         resolve({
@@ -49,5 +66,13 @@ export class TimerPage implements OnInit {
 
   unRegisterAPIControls() {
     this.deviceConnectionService.unregisterListener('/api/timer/control');
+  }
+
+  fontSize() {
+    let size = parseInt(this.timerSize);
+
+    size = size > 0 && size < 100 ? size : 25;
+
+    return `${size}vh`;
   }
 }

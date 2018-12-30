@@ -4,3 +4,51 @@
     color: red;
     margin-bottom: 16px;
 }
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 100%;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+
+    ion-button {
+        --padding-top: 15%;
+        --padding-bottom: 15%;
+    }
+}
+
+.setup-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #aaaaaa;
+    border-radius: var(--border-radius, 16px);
+    height: 35%;
+    background-color: var(--ion-color-primary);
+    color: white;
+    margin: 5% 0;
+
+    &.danger {
+        background-color: var(--ion-color-danger);
+    }
+}
+
+.setup-icon {
+    font-size: 40px;
+}
+
+.button-text {
+    font-size: 20px;
+}
+
+.qrcode {
+    width: 70%;
+}

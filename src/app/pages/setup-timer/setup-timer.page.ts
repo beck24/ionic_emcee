@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, NavController } from '@ionic/angular';
 import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
 import QRCode from 'qrcode';
 
@@ -17,9 +17,14 @@ export class SetupTimerPage implements OnInit {
   constructor(
     public loadingController: LoadingController,
     public deviceConnectionService: DeviceConnectionService,
+    public navCtrl: NavController,
   ) { }
 
   ngOnInit() {}
+
+  reset() {
+    this.navCtrl.navigateBack('/');
+  }
 
   async startServer() {
     await this.showLoading();
