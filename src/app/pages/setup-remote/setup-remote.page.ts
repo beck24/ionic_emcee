@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController, Platform } from '@ionic/angular';
 import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
 
 @Component({
@@ -12,15 +13,26 @@ export class SetupRemotePage implements OnInit {
 
   constructor(
     private deviceConnectionService: DeviceConnectionService,
+    private navCtrl: NavController,
+    private platform: Platform,
   ) { }
 
   ngOnInit() {
   }
 
+  reset() {
+    this.navCtrl.navigateBack('/');
+  }
+
   scan() {
+    if (!this.platform.is('cordova')) {
+      this.navCtrl.navigateForward('/remote');
+      return;
+    }
+
     this.deviceConnectionService.scanSetup()
       .then(() => {
-        console.log('success');
+        this.navCtrl.navigateForward('/remote');
       })
       .catch((error) => {
         console.log('scan error', error);

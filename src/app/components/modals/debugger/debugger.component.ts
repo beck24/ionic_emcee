@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { LoggerService } from '../../../services/logger/logger.service';
 import { DeviceConnectionService } from '../../../services/device-connection/device-connection.service';
 import * as format from 'date-fns/format';
@@ -19,6 +19,7 @@ export class DebuggerComponent implements OnInit {
     private modalController: ModalController,
     private logger: LoggerService,
     private deviceConnectionService: DeviceConnectionService,
+    private platform: Platform,
   ) { }
 
   ngOnInit() {}
@@ -32,6 +33,10 @@ export class DebuggerComponent implements OnInit {
       .then(() => {
         this.deviceConnectionService.reset();
       });
+  }
+
+  exitApp() {
+    navigator['app'].exitApp();
   }
 
   timeFormat(date) {

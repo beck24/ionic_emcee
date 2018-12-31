@@ -9,9 +9,13 @@
 </ion-header>
 
 <ion-content padding tappable (press)="debugTap()">
-    <div *ngIf="tab === 'reset'">
-      <ion-button color="primary" (click)="resetDevice()">Reset Device</ion-button>
-      <ion-button color="danger" (click)="close()">Cancel</ion-button>
+    <div *ngIf="tab === 'reset'" class="reset-wrapper">
+      <div padding>
+        <h2>Reset Application?</h2>
+      </div>
+      <ion-button class="reset-button" expand="block" color="primary" size="large" (click)="resetDevice()">Reset Application</ion-button>
+      <!-- <ion-button class="reset-button" expand="block" color="warning" size="large" (click)="exitApp()">Exit Application</ion-button> -->
+      <ion-button class="reset-button" expand="block" color="danger" size="large" (click)="close()">Cancel</ion-button>
     </div>
 
     <div *ngIf="tab === 'log'">
