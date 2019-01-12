@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { DeviceConnectionService } from '../../../services/device-connection/device-connection.service';
+import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
 
 @Component({
   selector: 'app-timer',
@@ -11,6 +11,8 @@ export class TimerPage implements OnInit {
   timerControl: String = 'reset';
   time: any = '120000';
   timerSize: any = 25;
+
+  @ViewChild('wrapper') wrapperRef: ElementRef;
 
   constructor(
     private deviceConnectionService: DeviceConnectionService,
@@ -71,8 +73,10 @@ export class TimerPage implements OnInit {
   fontSize() {
     let size = parseInt(this.timerSize);
 
-    size = size > 0 && size < 100 ? size : 25;
+    let height = this.wrapperRef.nativeElement.getBoundingClientRect().height;
 
-    return `${size}vh`;
+    let baseSize = Math.round((height / 100) * size * 0.7);
+
+    return `${baseSize}px`;
   }
 }

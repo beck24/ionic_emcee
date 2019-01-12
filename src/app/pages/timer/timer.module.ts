@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '../../../components/components.module';
+import { ComponentsModule } from '../../components/components.module';
 
 import { TimerPage } from './timer.page';
 

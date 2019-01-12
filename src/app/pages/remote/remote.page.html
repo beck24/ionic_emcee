@@ -1,3 +1,17 @@
 <ion-content padding>
+    <div class="preview">
+        <div class="wrapper" #wrapper>
+            <countdown
+                [control]="timerControl"
+                [time]="time"
+                [style.fontSize]="fontSize()"
+            >
+            </countdown>
+        </div>
+    </div>
 
+    <ion-item>
+        <ion-label position="stacked">Font Size</ion-label>
+        <ion-range [(ngModel)]="timerSize" min="0" max="100" pin></ion-range>
+    </ion-item>
 </ion-content>
