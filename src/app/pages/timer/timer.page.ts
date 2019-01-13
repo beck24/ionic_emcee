@@ -9,7 +9,7 @@ import { DeviceConnectionService } from '../../services/device-connection/device
 })
 export class TimerPage implements OnInit {
   timerControl: String = 'reset';
-  time: any = '120000';
+  time: any = 60 * 30 * 1000;
   timerSize: any = 25;
 
   @ViewChild('wrapper') wrapperRef: ElementRef;

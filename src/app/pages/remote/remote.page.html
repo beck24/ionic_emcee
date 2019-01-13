@@ -78,14 +78,9 @@
     </div>
 
     <div *ngIf="view === 'timer'">
-        <ion-item>
+        <ion-item tappable (click)="timePicker()">
             <ion-label>Set Initial Time</ion-label>
-            <ion-datetime
-                display-format="HH:mm:ss"
-                picker-format="HH:mm:ss"
-                placeholder="00:02:00"
-                [(ngModel)]="timeInputRaw"
-            ></ion-datetime>
+            {{ pickerIntervalFormat(pickerHour) }}:{{ pickerIntervalFormat(pickerMinute) }}:{{ pickerIntervalFormat(pickerSecond) }}
         </ion-item>
 
         <ion-button (click)="sendControl('timer')">

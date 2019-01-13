@@ -1,13 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform, PickerController } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
-import * as dateFormat from 'date-fns/format';
-import * as startOfDay from 'date-fns/start_of_day';
-import * as addMinutes from 'date-fns/add_minutes';
-import * as addSeconds from 'date-fns/add_seconds';
-import * as addHours from 'date-fns/add_hours';
-import * as differenceInMilliseconds from 'date-fns/difference_in_milliseconds';
 
 @Component({
   selector: 'app-remote',
@@ -17,13 +11,15 @@ import * as differenceInMilliseconds from 'date-fns/difference_in_milliseconds';
 export class RemotePage implements OnInit {
   previewTimerControl: String = 'reset';
   previewTimerSize: any = 25;
-  previewTime: any = '120000';
+  previewTime: any = 60 * 30 * 1000;
 
   timerControl: String = 'reset';
-  time: any = '120000';
+  time: any = 60 * 30 * 1000;
   timerSize: any = 25;
 
-  timeInputRaw: any = dateFormat(addMinutes(startOfDay(new Date()), 2), 'YYYY-MM-DD[T]HH:mm:ss');
+  pickerHour: number = 0;
+  pickerMinute: number = 30;
+  pickerSecond: number = 0;
 
   view: any = 'controls';
 
@@ -31,6 +27,7 @@ export class RemotePage implements OnInit {
 
   constructor(
     private platform: Platform,
+    private pickerCtrl: PickerController,
     private screenOrientation: ScreenOrientation,
     private deviceConnectionService: DeviceConnectionService,
   ) { }
@@ -76,7 +73,6 @@ export class RemotePage implements OnInit {
         payload.timerControl = this.timerControl;
 
         callback = (result) => {
-          console.log(result);
           if (result.hasOwnProperty('timerControl')) {
             this.previewTimerControl = result.timerControl;
           }
@@ -84,8 +80,13 @@ export class RemotePage implements OnInit {
 
       break;
       case 'timer':
-        console.log(this.timeInputRaw);
-        console.log(differenceInMilliseconds(startOfDay(new Date), this.timeInputRaw));
+        payload.time = this.time;
+
+        callback = (result) => {
+          if (result.hasOwnProperty('time')) {
+            this.previewTime = result.time;
+          }
+        };
       break;
       case 'font':
         payload.timerSize = this.timerSize;
@@ -110,5 +111,78 @@ export class RemotePage implements OnInit {
       .catch((error) => {
         console.log('make an error');
       });
+  }
+
+  async timePicker() {
+    const hours = [];
+    const minutes = [];
+    const seconds = [];
+
+    for (let i = 0; i < 100; i++) {
+      hours.push({
+        text: i < 10 ? `0${i}` : `${i}`,
+        value: i,
+      });
+    }
+
+    for (let i = 0; i < 60; i++) {
+      minutes.push({
+        text: i < 10 ? `0${i}` : `${i}`,
+        value: i,
+      });
+
+      seconds.push({
+        text: i < 10 ? `0${i}` : `${i}`,
+        value: i,
+      });
+    }
+
+    const picker = await this.pickerCtrl.create({
+      buttons: [{
+        text: 'Done',
+        handler: (result) => {
+          let ms = 0;
+
+          if (result.seconds) {
+            ms += (result.seconds.value * 1000);
+          }
+
+          if (result.minutes) {
+            ms += (result.minutes.value * 60 * 1000);
+          }
+
+          if (result.hours) {
+            ms += (result.hours.value * 60 * 60 * 1000);
+          }
+
+          this.pickerHour = result.hours.value;
+          this.pickerMinute = result.minutes.value;
+          this.pickerSecond = result.seconds.value;
+          this.time = ms;
+        }
+      }],
+      columns: [
+        {
+          name: 'hours',
+          options: hours,
+          selectedIndex: this.pickerHour,
+        },
+        {
+          name: 'minutes',
+          selectedIndex: this.pickerMinute,
+          options: minutes,
+        },
+        {
+          name: 'seconds',
+          options: seconds,
+          selectedIndex: this.pickerSecond,
+        }
+      ],
+    });
+    await picker.present();
+  }
+
+  pickerIntervalFormat(num) {
+    return num < 10 ? `0${num}` : `${num}`;
   }
 }
