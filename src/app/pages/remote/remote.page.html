@@ -44,9 +44,11 @@
         </ion-button>
     </ion-toolbar>
 
-    <div *ngIf="view === 'controls'">
+    <div *ngIf="view === 'controls'" text-center padding>
         <ion-button
             size="large"
+            shape="round"
+            class="control-button"
             (click)="setControl('start')"
             icon-only
         >
@@ -55,6 +57,8 @@
 
         <ion-button
             size="large"
+            shape="round"
+            class="control-button"
             (click)="setControl('stop')"
             icon-only
         >
@@ -63,10 +67,29 @@
 
         <ion-button
             size="large"
+            shape="round"
+            color="danger"
+            class="control-button"
             (click)="setControl('reset')"
             icon-only
         >
             <ion-icon name="refresh"></ion-icon>
+        </ion-button>
+    </div>
+
+    <div *ngIf="view === 'timer'">
+        <ion-item>
+            <ion-label>Set Initial Time</ion-label>
+            <ion-datetime
+                display-format="HH:mm:ss"
+                picker-format="HH:mm:ss"
+                placeholder="00:02:00"
+                [(ngModel)]="timeInputRaw"
+            ></ion-datetime>
+        </ion-item>
+
+        <ion-button (click)="sendControl('timer')">
+            Submit
         </ion-button>
     </div>
 

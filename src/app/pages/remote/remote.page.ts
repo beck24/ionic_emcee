@@ -2,6 +2,12 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
+import * as dateFormat from 'date-fns/format';
+import * as startOfDay from 'date-fns/start_of_day';
+import * as addMinutes from 'date-fns/add_minutes';
+import * as addSeconds from 'date-fns/add_seconds';
+import * as addHours from 'date-fns/add_hours';
+import * as differenceInMilliseconds from 'date-fns/difference_in_milliseconds';
 
 @Component({
   selector: 'app-remote',
@@ -16,6 +22,8 @@ export class RemotePage implements OnInit {
   timerControl: String = 'reset';
   time: any = '120000';
   timerSize: any = 25;
+
+  timeInputRaw: any = dateFormat(addMinutes(startOfDay(new Date()), 2), 'YYYY-MM-DD[T]HH:mm:ss');
 
   view: any = 'controls';
 
@@ -63,8 +71,6 @@ export class RemotePage implements OnInit {
     let callback: any = () => {};
     const payload: any = {};
 
-    console.log('sendcontrol');
-
     switch (type) {
       case 'controls':
         payload.timerControl = this.timerControl;
@@ -76,6 +82,10 @@ export class RemotePage implements OnInit {
           }
         };
 
+      break;
+      case 'timer':
+        console.log(this.timeInputRaw);
+        console.log(differenceInMilliseconds(startOfDay(new Date), this.timeInputRaw));
       break;
       case 'font':
         payload.timerSize = this.timerSize;
