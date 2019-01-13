@@ -2,16 +2,82 @@
     <div class="preview">
         <div class="wrapper" #wrapper>
             <countdown
-                [control]="timerControl"
-                [time]="time"
+                [control]="previewTimerControl"
+                [time]="previewTime"
                 [style.fontSize]="fontSize()"
             >
             </countdown>
         </div>
     </div>
 
-    <ion-item>
-        <ion-label position="stacked">Font Size</ion-label>
-        <ion-range [(ngModel)]="timerSize" min="0" max="100" pin></ion-range>
-    </ion-item>
+    <ion-toolbar text-center>
+        <ion-button
+            [fill]="view === 'controls' ? 'solid' : 'outline'"
+            size="large"
+            (click)="setView('controls')"
+        >
+            <ion-icon name="logo-game-controller-a"></ion-icon>
+        </ion-button>
+
+        <ion-button
+            [fill]="view === 'timer' ? 'solid' : 'outline'"
+            size="large"
+            (click)="setView('timer')"
+        >
+            <ion-icon name="timer"></ion-icon>
+        </ion-button>
+
+        <ion-button
+            [fill]="view === 'font' ? 'solid' : 'outline'"
+            size="large"
+            (click)="setView('font')"
+        >
+            <small>A</small>A
+        </ion-button>
+
+        <ion-button
+            [fill]="view === 'message' ? 'solid' : 'outline'"
+            size="large"
+            (click)="setView('message')"
+        >
+            <ion-icon name="text"></ion-icon>
+        </ion-button>
+    </ion-toolbar>
+
+    <div *ngIf="view === 'controls'">
+        <ion-button
+            size="large"
+            (click)="setControl('start')"
+            icon-only
+        >
+            <ion-icon name="play"></ion-icon>
+        </ion-button>
+
+        <ion-button
+            size="large"
+            (click)="setControl('stop')"
+            icon-only
+        >
+            <ion-icon name="square"></ion-icon>
+        </ion-button>
+
+        <ion-button
+            size="large"
+            (click)="setControl('reset')"
+            icon-only
+        >
+            <ion-icon name="refresh"></ion-icon>
+        </ion-button>
+    </div>
+
+    <div *ngIf="view === 'font'">
+        <ion-item>
+            <ion-label position="stacked">Font Size</ion-label>
+            <ion-range [(ngModel)]="timerSize" min="0" max="100" pin></ion-range>
+        </ion-item>
+
+        <ion-button (click)="sendControl('font')">
+            Submit
+        </ion-button>
+    </div>
 </ion-content>
