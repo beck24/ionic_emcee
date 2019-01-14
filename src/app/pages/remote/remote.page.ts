@@ -12,6 +12,7 @@ export class RemotePage implements OnInit {
   previewTimerControl: String = 'reset';
   previewTimerSize: any = 25;
   previewTime: any = 60 * 30 * 1000;
+  previewMessage: String = '';
 
   timerControl: String = 'reset';
   time: any = 60 * 30 * 1000;
@@ -22,6 +23,7 @@ export class RemotePage implements OnInit {
   pickerSecond: number = 0;
 
   view: any = 'controls';
+  message: String = '';
 
   @ViewChild('wrapper') wrapperRef: ElementRef;
 
@@ -99,6 +101,17 @@ export class RemotePage implements OnInit {
             this.previewTimerSize = result.timerSize;
           }
         };
+      break;
+      case 'message':
+        payload.message = this.message;
+
+        callback = (result) => {
+          if (result.hasOwnProperty('message')) {
+            this.previewMessage = result.message;
+
+            this.message = '';
+          }
+        }
       break;
     }
 

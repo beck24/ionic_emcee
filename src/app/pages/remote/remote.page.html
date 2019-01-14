@@ -98,4 +98,20 @@
             Submit
         </ion-button>
     </div>
+
+    <div *ngIf="view === 'message'">
+        <ion-item>
+            <ion-label position="stacked">Message</ion-label>
+            <ion-textarea
+                [(ngModel)]="message"
+                placeholder="Send a message"
+                rows="8"
+            >
+            </ion-textarea>
+        </ion-item>
+    
+        <ion-button (click)="sendControl('message')">
+            Submit
+        </ion-button>
+    </div>
 </ion-content>
