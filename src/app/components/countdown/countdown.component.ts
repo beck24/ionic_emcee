@@ -16,6 +16,8 @@ export class CountdownComponent implements OnInit {
   timeDiff: number = 0;
   timerDisplay: string = '00:00:00';
   timerActive: boolean = false;
+  count: number = 0;
+  interval: any = null;
   @Output() result: EventEmitter<any> = new EventEmitter();
   @Input() control: string;
   @Input() time: any = 0; // numnber of ms to count down from
@@ -24,6 +26,17 @@ export class CountdownComponent implements OnInit {
 
   ngOnInit() {
     this.time = parseFloat(this.time);
+
+    // Note - interval ticker necessary to keep the renderer engaged
+    // otherwise the component stops listening to changes on Input for some reason
+    // it's hacky but it works
+    this.interval = setInterval(() => {
+      this.count++;
+
+      if (this.count >= 1000) {
+        this.count = 0;
+      }
+    }, 100);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -46,7 +59,12 @@ export class CountdownComponent implements OnInit {
     if (changes.hasOwnProperty('time')) {
       this.time = parseFloat(changes.time.currentValue);
       this.reset();
-      console.log(this.time);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.interval !== null) {
+      clearInterval(this.interval);
     }
   }
 

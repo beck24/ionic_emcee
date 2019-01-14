@@ -44,6 +44,9 @@ export class DeviceConnectionService {
         let result: any = { ...this.thisDevice };
         let status = 200;
 
+        this.logger.log('handshake payload');
+        this.logger.log(payload);
+
         if (payload.ipaddress && payload.port && payload.token) {
           this.otherDevice.ipaddress = payload.ipaddress;
           this.otherDevice.port = payload.port;
@@ -245,7 +248,6 @@ export class DeviceConnectionService {
           token: '',
         };
 
-        console.log('navigating back');
         this.navCtrl.navigateBack('/');
       });
   }
@@ -270,22 +272,31 @@ export class DeviceConnectionService {
           this.otherDevice.token = dataJSON.token;
           this.otherDevice.port = dataJSON.port;
 
-          this.handshake()
-            .then((handshakeData) => {
-              if (handshakeData['ipaddress'] === this.otherDevice.ipaddress) {
-                this.remoteConnected = true;
+          this.startServer()
+            .then(() => {
+              this.handshake()
+                .then((handshakeData) => {
+                  if (handshakeData['ipaddress'] === this.otherDevice.ipaddress) {
+                    this.remoteConnected = true;
 
-                resolve();
-                return;
-              }
+                    resolve();
+                    return;
+                  }
 
-              reject('Invalid scan data');
+                  reject('Invalid scan data');
+                })
+                .catch((err) => {
+                  this.logger.log(err);
+                  reject(err);
+                });
             })
             .catch((err) => {
+              this.logger.log(err);
               reject(err);
             });
         })
         .catch((err) => {
+          this.logger.log(err);
           reject(err);
         });
     });

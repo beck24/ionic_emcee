@@ -34,14 +34,13 @@ export class TimerPage implements OnInit {
   registerAPIControls() {
     this.deviceConnectionService.registerListener('/api/timer/control', (payload: any = {}) => {
       return new Promise(async (resolve) => {
-        console.log(payload);
 
         if (payload.hasOwnProperty('time')) {
           this.time = payload.time;
         }
 
-        if (payload.hasOwnProperty('control')) {
-          this.timerControl = payload.control;
+        if (payload.hasOwnProperty('timerControl')) {
+          this.timerControl = payload.timerControl;
         }
 
         if (payload.hasOwnProperty('timerSize')) {
@@ -58,10 +57,15 @@ export class TimerPage implements OnInit {
           toast.present();
         }
 
-        resolve({
+        let result = {
           status: 200,
-          body: '',
-        });
+          body: {
+            success: true,
+            ...payload,
+          },
+        };
+
+        resolve(result);
       });
     });
   }

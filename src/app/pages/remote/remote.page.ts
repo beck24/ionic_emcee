@@ -83,6 +83,9 @@ export class RemotePage implements OnInit {
         payload.time = this.time;
 
         callback = (result) => {
+          console.log('callback result');
+          console.log(result);
+
           if (result.hasOwnProperty('time')) {
             this.previewTime = result.time;
           }
@@ -110,6 +113,7 @@ export class RemotePage implements OnInit {
       })
       .catch((error) => {
         console.log('make an error');
+        console.log(error);
       });
   }
 
