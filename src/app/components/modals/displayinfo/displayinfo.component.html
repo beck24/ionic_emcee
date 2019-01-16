@@ -1,0 +1,89 @@
+<ion-toolbar>
+  <ion-buttons slot="end">
+    <ion-button (click)="close()">Done</ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-content>
+    <ion-slides pager="true">
+        <ion-slide>
+          <div [style.width]="swipeWidth" [style.height]="swipeHeight" padding>
+              <h1>Step 1: Connect to WIFI</h1>
+
+              <p>
+                Connect this device to a WIFI network.  The network does not need internet access.
+                It can be a simple wireless router plugged into a wall, or a mobile hotspot provided
+                by this or another device.  All that matters is that this device and the remote device
+                are connected to the same network.
+              </p>
+
+              <p>
+                Swipe left for next instruction.
+              </p>
+          </div>
+        </ion-slide>
+
+        <ion-slide>
+            <div [style.width]="swipeWidth" [style.height]="swipeHeight" padding>
+                <h1>Step 2: Connect to Remote</h1>
+
+                <p>
+                  Tap on the "Connect" button.  This will make the device available for connection.  A QR code (pictured below) will
+                  be visible when the device is ready.  Scan this code with the remote device to complete the connection.
+                </p>
+
+                <ion-grid>
+                  <ion-row>
+                    <ion-col>
+                        <img [src]="qrcode" /><br>
+                        <small>Example QR Code</small>
+                    </ion-col>
+                    <ion-col>
+                      <br><br>
+                      Swipe left for<br>
+                      next instruction.
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+            </div>
+        </ion-slide>
+
+        <ion-slide>
+            <div [style.width]="swipeWidth" [style.height]="swipeHeight" padding>
+                <h1>Step 3: Use Display</h1>
+
+                <p>
+                  On successful connection to the remote device the display will turn into a countdown timer.
+                  The remote device can be used to control the timer in terms of timer duration, font size,
+                  timer start/stop/reset, and temporary popup messages.
+                </p>
+
+                <p>
+                  In this mode the display device has limited user interactivity, it acts a simple display.
+                </p>
+
+                <p>
+                  Swipe left for next instruction.
+                </p>
+            </div>
+        </ion-slide>
+
+        <ion-slide>
+            <div [style.width]="swipeWidth" [style.height]="swipeHeight" padding>
+                <h1>Step 4: Shut Down</h1>
+
+                <p>
+                  When the device has finished being used you can disconnect it from the remote device and restore
+                  the app to its initial state.
+                </p>
+
+                <p>
+                  Tap on the dislay 5 times in rapid succession.  A screen will pop up with a button to reset the
+                  application.  Tapping this button will disconnect the device from the remote and reset the app.
+                </p>
+
+                <ion-button (click)="close()">Close</ion-button>
+            </div>
+        </ion-slide>
+      </ion-slides>
+</ion-content>

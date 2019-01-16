@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, NavController } from '@ionic/angular';
+import { LoadingController, NavController, ModalController } from '@ionic/angular';
 import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
-import QRCode from 'qrcode';
+import { DisplayinfoComponent } from '../../components/modals/displayinfo/displayinfo.component';
 
 @Component({
   selector: 'app-setup-timer',
@@ -18,6 +18,7 @@ export class SetupTimerPage implements OnInit {
     public loadingController: LoadingController,
     public deviceConnectionService: DeviceConnectionService,
     public navCtrl: NavController,
+    public modalCtrl: ModalController,
   ) { }
 
   ngOnInit() {}
@@ -85,5 +86,14 @@ export class SetupTimerPage implements OnInit {
 
       resolve();
     });
+  }
+
+  async detailsModal() {
+    const modal = await this.modalCtrl.create({
+      component: DisplayinfoComponent,
+      backdropDismiss: false,
+    });
+
+    modal.present();
   }
 }

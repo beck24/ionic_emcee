@@ -13,23 +13,20 @@
 
       <div *ngIf="!deviceConnectionService.qrcode">
         <p>
-          To set this device up as the display ensure that it is connected to the same WIFI network as the controller
-          device.
+          <strong>Connect this device as the display.</strong>
         </p>
 
-        <p>
-          Note that the WIFI network does not need to be connected to the public internet. This can be a standard
-          router, or
-          even setting one of the devices to act as a mobile hotspot.
-        </p>
+        <ol>
+          <li>Connect to WIFI</li>
+          <li>Connect to Remote</li>
+          <li>Use Display</li>
+          <li>Shut Down</li>
+        </ol>
 
-        <p>
-          Once the device is connected to the WIFI tap the button below to begin the connection.
-        </p>
-
-        <p>
-          To exit device mode and return to this setup tap anywhere 5 times in rapid succession.
-        </p>
+        <ion-button (click)="detailsModal()">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          Detailed Instructions
+        </ion-button>
       </div>
     </div>
 
