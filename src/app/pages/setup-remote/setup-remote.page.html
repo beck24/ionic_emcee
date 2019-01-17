@@ -6,25 +6,25 @@
               <li *ngFor="let error of errors">{{ error }}</li>
             </ul>
           </div>
-    
+
+          <div>
             <p>
-                To set this device up as the display ensure that it is connected to the same WIFI network as the display device.
+              <strong>Connect this device as the remote.</strong>
             </p>
-    
-            <p>
-                Note that the WIFI network does not need to be connected to the public internet. This can be a standard router, or
-                even setting one of the devices to act as a mobile hotspot.
-            </p>
-    
-            <p>
-                Start the connection on the display device.  Once the QR Code is visible
-                tap the button below and scan the code to complete the connection.
-            </p>
-    
-            <p>
-              To exit device mode and return to this setup tap anywhere 5 times in rapid succession.
-            </p>
+      
+            <ol>
+              <li>Connect to WIFI</li>
+              <li>Connect to Display</li>
+              <li>Use Remote</li>
+              <li>Shut Down</li>
+            </ol>
+      
+            <ion-button (click)="detailsModal()">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              Detailed Instructions
+            </ion-button>
           </div>
+        </div>
     
         <div class="section" padding>   
             <div

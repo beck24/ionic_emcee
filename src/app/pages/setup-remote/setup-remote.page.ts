@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, Platform } from '@ionic/angular';
+import { NavController, Platform, ModalController } from '@ionic/angular';
 import { DeviceConnectionService } from '../../services/device-connection/device-connection.service';
+import { RemoteinfoComponent } from '../../components/modals/remoteinfo/remoteinfo.component';
 
 @Component({
   selector: 'app-setup-remote',
@@ -15,6 +16,7 @@ export class SetupRemotePage implements OnInit {
     private deviceConnectionService: DeviceConnectionService,
     private navCtrl: NavController,
     private platform: Platform,
+    private modalCtrl: ModalController,
   ) { }
 
   ngOnInit() {
@@ -38,5 +40,14 @@ export class SetupRemotePage implements OnInit {
         console.log('scan error', error);
         this.errors.push(error);
       });
+  }
+
+  async detailsModal() {
+    const modal = await this.modalCtrl.create({
+      component: RemoteinfoComponent,
+      backdropDismiss: false,
+    });
+
+    modal.present();
   }
 }

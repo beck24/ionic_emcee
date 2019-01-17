@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { SetupRemotePage } from './setup-remote.page';
+import { RemoteinfoComponent } from '../../components/modals/remoteinfo/remoteinfo.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [SetupRemotePage]
+  declarations: [SetupRemotePage, RemoteinfoComponent],
+  entryComponents: [RemoteinfoComponent]
 })
 export class SetupRemotePageModule {}
