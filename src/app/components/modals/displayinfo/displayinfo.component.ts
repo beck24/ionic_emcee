@@ -19,10 +19,10 @@ export class DisplayinfoComponent implements OnInit {
 
   ngOnInit() {
     let rawHeight = this.platform.height();
-    let mod = 0.8;
+    let mod = 0.95;
 
     if (rawHeight >= 768) {
-      mod = 0.6;
+      mod = 0.7;
     }
 
     let height = Math.round(rawHeight * mod);
